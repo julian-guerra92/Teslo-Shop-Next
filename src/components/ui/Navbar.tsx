@@ -29,9 +29,9 @@ export const Navbar = () => {
                      <Button sx={{ fontSize: '16px' }}>Women</Button>
                   </Link>
                </NextLink>
-               <NextLink href='/category/children' passHref legacyBehavior>
+               <NextLink href='/category/kids' passHref legacyBehavior>
                   <Link>
-                     <Button sx={{ fontSize: '16px' }}>Children</Button>
+                     <Button sx={{ fontSize: '16px' }}>Kids</Button>
                   </Link>
                </NextLink>
             </Box>
