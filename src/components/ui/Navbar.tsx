@@ -1,9 +1,30 @@
 
+import { ChangeEvent, useContext, useState } from 'react';
 import NextLink from 'next/link';
-import { AppBar, Badge, Box, Button, IconButton, Link, Toolbar, Typography } from '@mui/material';
-import { SearchOutlined, ShoppingCartOutlined } from '@mui/icons-material';
+import { useRouter } from 'next/router';
+import { AppBar, Badge, Box, Button, IconButton, Input, InputAdornment, Link, Toolbar, Typography } from '@mui/material';
+import { ClearOutlined, SearchOutlined, ShoppingCartOutlined } from '@mui/icons-material';
+import { UiContext } from '../../context';
 
 export const Navbar = () => {
+
+   const { asPath, push } = useRouter();
+
+   const { toggleSideMenu } = useContext(UiContext);
+
+   const [searchTerm, setSearchTerm] = useState('');
+
+   const [isSearchVisible, setIsSearchVisible] = useState(false);
+
+   const onChageTerm = ({ target }: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      const { value } = target;
+      setSearchTerm(value);
+   }
+
+   const onSearchTerm = () => {
+      if (searchTerm.trim().length === 0) return;
+      push(`/search/${searchTerm}`);
+   }
 
    return (
       <AppBar>
@@ -18,27 +39,81 @@ export const Navbar = () => {
 
             <Box flex={1} />
 
-            <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+            <Box sx={{ display: isSearchVisible ? 'none' : { xs: 'none', sm: 'block' } }} className='fadeIn'>
                <NextLink href='/category/men' passHref legacyBehavior>
                   <Link>
-                     <Button sx={{ fontSize: '16px' }}>Men</Button>
+                     <Button
+                        color={asPath === '/category/men' ? 'primary' : 'info'}
+                        sx={{ fontSize: '16px', ":hover": { color: 'black' } }}
+                     >
+                        Men
+                     </Button>
                   </Link>
                </NextLink>
                <NextLink href='/category/women' passHref legacyBehavior>
                   <Link>
-                     <Button sx={{ fontSize: '16px' }}>Women</Button>
+                     <Button
+                        color={asPath === '/category/women' ? 'primary' : 'info'}
+                        sx={{ fontSize: '16px', ml: 1, ":hover": { color: 'black' } }}
+                     >
+                        Women
+                     </Button>
                   </Link>
                </NextLink>
                <NextLink href='/category/kids' passHref legacyBehavior>
                   <Link>
-                     <Button sx={{ fontSize: '16px' }}>Kids</Button>
+                     <Button
+                        color={asPath === '/category/kids' ? 'primary' : 'info'}
+                        sx={{ fontSize: '16px', ml: 1, ":hover": { color: 'black' } }}
+                     >
+                        Kids
+                     </Button>
                   </Link>
                </NextLink>
             </Box>
 
             <Box flex={1} />
 
-            <IconButton>
+            {/* Pantallas grandes */}
+            {
+               isSearchVisible
+                  ? (
+                     <Input
+                        sx={{ display: { xs: 'none', sm: 'flex' } }}
+                        className='fadeIn'
+                        autoFocus
+                        value={searchTerm}
+                        onChange={onChageTerm}
+                        onKeyUp={(event) => event.key === 'Enter' ? onSearchTerm() : null}
+                        type='text'
+                        placeholder="Search..."
+                        endAdornment={
+                           <InputAdornment position="end">
+                              <IconButton
+                                 onClick={() => setIsSearchVisible(false)}
+                              >
+                                 <ClearOutlined />
+                              </IconButton>
+                           </InputAdornment>
+                        }
+                     />
+                  )
+                  : (
+                     <IconButton
+                        className='fadeIn'
+                        onClick={() => setIsSearchVisible(true)}
+                        sx={{ display: { xs: 'none', sm: 'flex' } }}
+                     >
+                        <SearchOutlined />
+                     </IconButton>
+                  )
+            }
+
+            {/* Pantallas pequeñas */}
+            <IconButton
+               sx={{ display: { xs: 'flex', sm: 'none' } }}
+               onClick={toggleSideMenu}
+            >
                <SearchOutlined />
             </IconButton>
 
@@ -52,7 +127,12 @@ export const Navbar = () => {
                </Link>
             </NextLink>
 
-            <Button sx={{ fontSize: '16px', ml: 1 }}>Menu</Button>
+            <Button
+               sx={{ fontSize: '16px', ml: 1 }}
+               onClick={toggleSideMenu}
+            >
+               Menu
+            </Button>
 
          </Toolbar>
       </AppBar>

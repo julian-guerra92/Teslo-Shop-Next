@@ -1,6 +1,8 @@
 
 import mongoose from 'mongoose';
 
+mongoose.set('strictQuery', false);
+
 /**
  * 0 = disconnected
  * 1 = connected
