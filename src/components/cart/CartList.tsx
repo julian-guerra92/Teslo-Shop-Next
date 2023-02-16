@@ -1,36 +1,41 @@
 
-import { FC } from 'react';
+import { FC, useContext } from 'react';
 import NextLink from 'next/link';
-import { Button, CardActionArea, CardMedia, Grid, Link, Typography } from '@mui/material';
-import { initialData } from '../../database/products';
-import { Box } from '@mui/system';
+import { Button, CardActionArea, CardMedia, Grid, Link, Typography, Box } from '@mui/material';
 import { ItemCounter } from '../ui';
-
-const productsInCart = [
-   initialData.products[0],
-   initialData.products[1],
-   initialData.products[2],
-   initialData.products[3],
-]
+import { CartContext } from '../../context/cart';
+import { ICartProduct } from '../../interfaces';
 
 interface Props {
    editable?: boolean;
 }
 
 export const CartList: FC<Props> = ({ editable = false }) => {
+
+   const { cart, updateCartQuantity, removeCartProduct } = useContext(CartContext);
+
+   const onChangeQuantityProduct = (product: ICartProduct, newQuantityValue: number) => {
+      product.quantity = newQuantityValue;
+      updateCartQuantity(product);
+   }
+
+   const onRemoveProduct = (product: ICartProduct) => {
+      removeCartProduct(product);
+   }
+
    return (
       <>
          {
-            productsInCart.map(product => (
-               <Grid container spacing={2} key={product.slug} sx={{ mb: 1 }}>
+            cart.map(product => (
+               <Grid container spacing={2} key={product.slug + product.size} sx={{ mb: 1 }}>
 
                   <Grid item sm={3}>
                      {/* TODO: llevar a la página del producto */}
-                     <NextLink href='/product/slug' passHref legacyBehavior>
+                     <NextLink href={`/product/${product.slug}`} passHref legacyBehavior>
                         <Link>
                            <CardActionArea>
                               <CardMedia
-                                 image={`/products/${product.images[0]}`}
+                                 image={`/products/${product.image}`}
                                  component='img'
                                  sx={{ borderRadius: '5px' }}
                               />
@@ -42,11 +47,17 @@ export const CartList: FC<Props> = ({ editable = false }) => {
                   <Grid item sm={7}>
                      <Box display='flex' flexDirection='column'>
                         <Typography variant='body1'>{product.title}</Typography>
-                        <Typography variant='body1'>Talla: <strong>M</strong></Typography>
+                        <Typography variant='body1'>Talla: <strong>{product.size}</strong></Typography>
                         {
                            editable
-                              ? <ItemCounter />
-                              : <Typography variant='subtitle1'>Quantity: 3</Typography>
+                              ? (
+                                 <ItemCounter
+                                    currentValue={product.quantity}
+                                    maxValue={5} //TODO: Arreglar esta función
+                                    updateQuantity={(value) => onChangeQuantityProduct(product, value)}
+                                 />
+                              )
+                              : <Typography variant='subtitle1'>{`Quantity: ${product.quantity}`}</Typography>
                         }
                      </Box>
                   </Grid>
@@ -55,7 +66,11 @@ export const CartList: FC<Props> = ({ editable = false }) => {
                      <Typography variant='subtitle1'>${product.price}</Typography>
                      {
                         editable && (
-                           <Button variant='text' color='warning'>
+                           <Button
+                              variant='text'
+                              color='warning'
+                              onClick={() => onRemoveProduct(product)}
+                           >
                               Remove
                            </Button>
                         )
