@@ -1,10 +1,16 @@
 
+import { useContext } from 'react';
 import NextLink from 'next/link';
-import { ShopLayout } from '../../components/layouts';
 import { Box, Button, Card, CardContent, Divider, Grid, Link, Typography } from '@mui/material';
+import { ShopLayout } from '../../components/layouts';
 import { CartList, OrderSummary } from '../../components/cart';
+import { CartContext } from '../../context';
+import { countries } from '../../utils';
 
 const SummaryPage = () => {
+
+   const { address, summary } = useContext(CartContext);
+
    return (
       <ShopLayout title='Purchase Summary' pageDescription='Purchase order summary'>
          <Typography variant='h1' component='h1'>Purchase Summary</Typography>
@@ -19,7 +25,9 @@ const SummaryPage = () => {
                <Card className='symmary-card'>
 
                   <CardContent>
-                     <Typography variant='h2'>Summary (3 Products)</Typography>
+                     <Typography variant='h2'>
+                        Summary ({summary.numberOfItems} {summary.numberOfItems <= 1 ? 'Product' : 'Products'})
+                     </Typography>
 
                      <Divider sx={{ my: 1 }} />
 
@@ -32,11 +40,11 @@ const SummaryPage = () => {
                         </NextLink>
                      </Box>
 
-                     <Typography>Julián Andrés Rodríguez Guerra</Typography>
-                     <Typography>Carrera 31 # 28-41</Typography>
-                     <Typography>Santa Rosa de Osos - Antioquia</Typography>
-                     <Typography>Colombia</Typography>
-                     <Typography>+57 3217668210</Typography>
+                     <Typography>{address?.firstName} {address?.lastName}</Typography>
+                     <Typography>{address?.address}{address?.address2 ? `, ${address.address2}`: ''}</Typography>
+                     <Typography>{address?.city}</Typography>
+                     <Typography>{countries.find( country => country.code === address?.country)?.name}</Typography>
+                     <Typography>{address?.phone}</Typography>
 
                      <Divider sx={{ my: 1 }} />
 

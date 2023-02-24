@@ -7,7 +7,6 @@ import { ErrorOutline } from '@mui/icons-material';
 import { useForm } from 'react-hook-form';
 import { AuthLayout } from '../../components/layouts';
 import { validations } from '../../utils';
-import { tesloApi } from '../../api';
 import { AuthContext } from '../../context';
 
 type FormData = {
@@ -27,16 +26,19 @@ const LoginPage = () => {
 
    const router = useRouter();
 
+   const queryParamater = router.query.p;
+
    const onLoginUser = async ({ email, password }: FormData) => {
       setShowError(false);
       const isValidLogin = await loginUser(email, password);
-      if(!isValidLogin) {
+      if (!isValidLogin) {
          setShowError(true);
          setTimeout(() => setShowError(false), 3000);
          return;
       }
       setIsLoading(true);
-      router.replace('/');
+      const pageDestination = router.query.p?.toString() || '/';
+      router.replace(pageDestination);
    }
 
    return (
@@ -104,7 +106,7 @@ const LoginPage = () => {
                         {
                            isLoading
                               ? (
-                                 <CircularProgress color='inherit'/>
+                                 <CircularProgress color='inherit' />
                               )
                               : 'Log In'
                         }
@@ -112,7 +114,10 @@ const LoginPage = () => {
                   </Grid>
 
                   <Grid item xs={12} display='flex' justifyContent='center'>
-                     <NextLink href='/auth/register' passHref legacyBehavior>
+                     <NextLink href={queryParamater ? `/auth/register?p=${queryParamater}` : `/auth/register`}
+                        passHref
+                        legacyBehavior
+                     >
                         <Link underline='always'>
                            New to TesloShop? Create an Account!
                         </Link>

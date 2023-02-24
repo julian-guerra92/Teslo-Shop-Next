@@ -4,7 +4,6 @@ import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { Box, Button, Chip, CircularProgress, Grid, Link, TextField, Typography } from '@mui/material';
 import { ErrorOutline } from '@mui/icons-material';
-import { LoadingButton } from '@mui/lab';
 import { useForm } from 'react-hook-form';
 import { AuthLayout } from '../../components/layouts';
 import { validations } from '../../utils';
@@ -31,6 +30,8 @@ const RegisterPage = () => {
 
    const router = useRouter();
 
+   const queryParameter = router.query.p;
+
    const onRegisterForm = async ({ email, password, firstName, lastName }: FormData) => {
       setShowError(false);
       const { hasError, message } = await registerUser(firstName, lastName, email, password);
@@ -41,11 +42,12 @@ const RegisterPage = () => {
          return;
       }
       setIsLoading(true);
-      router.replace('/');
+      const pageDestination = router.query.p?.toString() || '/';
+      router.replace(pageDestination);
    }
 
    return (
-      <AuthLayout title='Login'>
+      <AuthLayout title='Register'>
          <form onSubmit={handleSubmit(onRegisterForm)} noValidate>
             <Box sx={{ width: 400, padding: '10px 20px' }}>
                <Grid container spacing={2}>
@@ -138,7 +140,7 @@ const RegisterPage = () => {
                         {
                            isLoading
                               ? (
-                                 <CircularProgress color='inherit'/>
+                                 <CircularProgress color='inherit' />
                               )
                               : 'Create'
                         }
@@ -146,7 +148,10 @@ const RegisterPage = () => {
                   </Grid>
 
                   <Grid item xs={12} display='flex' justifyContent='center'>
-                     <NextLink href='/auth/login' passHref legacyBehavior>
+                     <NextLink href={queryParameter ? `/auth/login?p=${queryParameter}` : `/auth/login`}
+                        passHref
+                        legacyBehavior
+                     >
                         <Link underline='always'>
                            Already have an account? Log In!
                         </Link>

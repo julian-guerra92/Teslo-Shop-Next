@@ -32,12 +32,15 @@ const loginUser = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
    if (!bcrypt.compareSync(password, user.password!)) {
       return res.status(400).json({ message: 'Password or Email is not valid' });
    }
-   const { _id, role, name } = user;
+   const { _id, role, firstName, lastName } = user;
    const token = jwt.signToken(_id, email);
    return res.status(200).json({
       token,
       user: {
-         email, role, name
+         email,
+         role,
+         firstName,
+         lastName
       }
    })
 }

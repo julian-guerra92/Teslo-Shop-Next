@@ -1,12 +1,14 @@
 
 import { FC, useEffect, useReducer } from 'react';
-import { CartContext, cartReducer } from './';
-import { ICartProduct, IOrderSummary } from '../../interfaces/';
 import Cookie from 'js-cookie';
+import { CartContext, cartReducer } from './';
+import { ICartProduct, IOrderSummary, IShippingAddres } from '../../interfaces/';
 
 export interface CartState {
+   isLoaded: boolean;
    cart: ICartProduct[];
    summary: IOrderSummary;
+   address?: IShippingAddres;
 }
 
 interface Props {
@@ -14,13 +16,15 @@ interface Props {
 }
 
 const CART_INITIAL_STATE: CartState = {
+   isLoaded: false,
    cart: [],
    summary: {
       numberOfItems: 0,
       subTotal: 0,
       taxRate: 0,
       total: 0,
-   }
+   },
+   address: undefined
 }
 
 export const CartProvider = ({ children }: Props) => {
@@ -50,8 +54,18 @@ export const CartProvider = ({ children }: Props) => {
          taxRate: subTotal * taxRate,
          total: subTotal * (1 + taxRate)
       }
-      dispatch({type: 'Cart - Update order summary', payload: orderSummary});
+      dispatch({ type: 'Cart - Update order summary', payload: orderSummary });
    }, [state.cart])
+
+   useEffect(() => {
+      try {
+         const cookieAddress = Cookie.get('addressData') ? JSON.parse(Cookie.get('addressData')!) : undefined;
+         dispatch({type: 'Cart - Load address from cookie', payload: cookieAddress});
+      } catch (error) {
+         dispatch({type: 'Cart - Load address from cookie', payload: undefined});
+      }
+   }, [])
+
 
    const addProductToCart = (product: ICartProduct) => {
       const currentCart = [...state.cart];
@@ -77,6 +91,11 @@ export const CartProvider = ({ children }: Props) => {
       dispatch({ type: 'Cart - Remove product in cart', payload: product });
    }
 
+   const updateAddress = (address: IShippingAddres) => {
+      Cookie.set('addressData', JSON.stringify(address));
+      dispatch({type: 'Cart - Update address', payload: address});
+   }
+
    return (
       <CartContext.Provider value={{
          ...state,
@@ -84,6 +103,7 @@ export const CartProvider = ({ children }: Props) => {
          addProductToCart,
          removeCartProduct,
          updateCartQuantity,
+         updateAddress
       }}>
          {children}
       </CartContext.Provider>
