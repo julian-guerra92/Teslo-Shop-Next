@@ -17,7 +17,7 @@ export const SizeSelector: FC<Props> = ({ selectedSize, sizes, onSelectedSize })
                <Button
                   key={size}
                   size='small'
-                  color={selectedSize === size ? 'primary' : 'info'}
+                  color={selectedSize === size ? 'inherit' : 'info'}
                   sx={{":hover": {color: 'black'}}}
                   onClick={() => onSelectedSize(size)}
                >

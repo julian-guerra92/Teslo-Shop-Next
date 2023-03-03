@@ -1,6 +1,7 @@
 
-import { FC, useEffect, useReducer } from 'react';
+import { useEffect, useReducer } from 'react';
 import { useRouter } from 'next/router';
+import { useSession, signOut } from 'next-auth/react';
 import Cookies from 'js-cookie';
 import axios from 'axios';
 import { tesloApi } from '../../api';
@@ -23,13 +24,24 @@ const Auth_INITIAL_STATE: AuthState = {
 
 export const AuthProvider = ({ children }: Props) => {
 
+   const { data, status } = useSession(); //*Hook propio de NextAuth
+
    const [state, dispatch] = useReducer(authReducer, Auth_INITIAL_STATE);
 
    const router = useRouter();
 
    useEffect(() => {
-      checkToken();
-   }, [])
+      if (status === 'authenticated') {
+         console.log({ user: data.user })
+         dispatch({ type: 'Auth - Login', payload: data.user as IUser })
+      }
+   }, [status, data])
+
+
+   //*Validación personlizada
+   // useEffect(() => {
+   //    checkToken();
+   // }, [])
 
    const checkToken = async () => {
       if (!Cookies.get('token')) {
@@ -58,9 +70,11 @@ export const AuthProvider = ({ children }: Props) => {
    }
 
    const logout = () => {
-      Cookies.remove('token');
       Cookies.remove('cart');
-      router.reload();
+      Cookies.remove('addressData');
+      signOut();
+      // Cookies.remove('token');
+      // router.reload();
    }
 
    const registerUser = async (
