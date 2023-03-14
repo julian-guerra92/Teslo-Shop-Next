@@ -36,7 +36,7 @@ const LoginPage = () => {
          setShowError(true);
          setTimeout(() => setShowError(false), 4000);
       }
-   }, [])
+   }, [router])
 
    useEffect(() => {
       getProviders().then(prov => {

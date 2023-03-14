@@ -1,12 +1,19 @@
 
-import { useContext } from 'react';
+import { useContext, FC } from 'react';
 import { Grid, Typography } from '@mui/material';
 import { CartContext } from '../../context/cart';
 import { currency } from '../../utils';
+import { IOrderSummary } from '../../interfaces';
 
-export const OrderSummary = () => {
+interface Props {
+   summaryOrder?: IOrderSummary;
+}
+
+export const OrderSummary: FC<Props> = ({ summaryOrder }) => {
 
    const { summary } = useContext(CartContext);
+
+   const summaryToShow = summaryOrder ? summaryOrder : summary;
 
    return (
       <Grid container>
@@ -15,28 +22,28 @@ export const OrderSummary = () => {
             <Typography>Quantity of Products</Typography>
          </Grid>
          <Grid item xs={6} display='flex' justifyContent='end'>
-            <Typography>{summary.numberOfItems} {summary.numberOfItems > 1 ? 'Items' : 'Item'}</Typography>
+            <Typography>{summaryToShow.numberOfItems} {summaryToShow.numberOfItems > 1 ? 'Items' : 'Item'}</Typography>
          </Grid>
 
          <Grid item xs={6}>
             <Typography>Subtotal</Typography>
          </Grid>
          <Grid item xs={6} display='flex' justifyContent='end'>
-            <Typography>{currency.format(summary.subTotal)}</Typography>
+            <Typography>{currency.format(summaryToShow.subTotal)}</Typography>
          </Grid>
 
          <Grid item xs={6}>
             <Typography>Purchase tax ({Number(process.env.NEXT_PUBLIC_TAX_RATE) * 100}%)</Typography>
          </Grid>
          <Grid item xs={6} display='flex' justifyContent='end'>
-            <Typography>{currency.format(summary.taxRate)}</Typography>
+            <Typography>{currency.format(summaryToShow.taxRate)}</Typography>
          </Grid>
 
          <Grid item xs={6} sx={{ mt: 2 }}>
             <Typography variant='subtitle1'>Total:</Typography>
          </Grid>
          <Grid item xs={6} sx={{ mt: 2 }} display='flex' justifyContent='end'>
-            <Typography variant='subtitle1'>{currency.format(summary.total)}</Typography>
+            <Typography variant='subtitle1'>{currency.format(summaryToShow.total)}</Typography>
          </Grid>
 
       </Grid>

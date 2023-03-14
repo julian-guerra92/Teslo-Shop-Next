@@ -1,8 +1,10 @@
 
 import { FC, useEffect, useReducer } from 'react';
 import Cookie from 'js-cookie';
+import axios from 'axios';
 import { CartContext, cartReducer } from './';
-import { ICartProduct, IOrderSummary, IShippingAddres } from '../../interfaces/';
+import { ICartProduct, IOrderSummary, IShippingAddres, IOrder } from '../../interfaces/';
+import tesloApi from '../../api/tesloApi';
 
 export interface CartState {
    isLoaded: boolean;
@@ -60,9 +62,9 @@ export const CartProvider = ({ children }: Props) => {
    useEffect(() => {
       try {
          const cookieAddress = Cookie.get('addressData') ? JSON.parse(Cookie.get('addressData')!) : undefined;
-         dispatch({type: 'Cart - Load address from cookie', payload: cookieAddress});
+         dispatch({ type: 'Cart - Load address from cookie', payload: cookieAddress });
       } catch (error) {
-         dispatch({type: 'Cart - Load address from cookie', payload: undefined});
+         dispatch({ type: 'Cart - Load address from cookie', payload: undefined });
       }
    }, [])
 
@@ -93,7 +95,38 @@ export const CartProvider = ({ children }: Props) => {
 
    const updateAddress = (address: IShippingAddres) => {
       Cookie.set('addressData', JSON.stringify(address));
-      dispatch({type: 'Cart - Update address', payload: address});
+      dispatch({ type: 'Cart - Update address', payload: address });
+   }
+
+   const createOrder = async (): Promise<{ hasError: boolean; message: string }> => {
+      if (!state.address) {
+         throw new Error('No delivery address');
+      }
+      const body: IOrder = {
+         orderItems: state.cart,
+         shippingAdrress: state.address,
+         summaryOrder: state.summary,
+         isPaid: false
+      }
+      try {
+         const { data } = await tesloApi.post<IOrder>('/orders', body);
+         dispatch({ type: 'Cart - Order complete' });
+         return {
+            hasError: false,
+            message: data._id!
+         }
+      } catch (error) {
+         if (axios.isAxiosError(error)) {
+            return {
+               hasError: true,
+               message: error.response?.data.message
+            }
+         }
+         return {
+            hasError: true,
+            message: 'Unexpected error. Contact the administrator!'
+         }
+      }
    }
 
    return (
@@ -103,7 +136,8 @@ export const CartProvider = ({ children }: Props) => {
          addProductToCart,
          removeCartProduct,
          updateCartQuantity,
-         updateAddress
+         updateAddress,
+         createOrder,
       }}>
          {children}
       </CartContext.Provider>
