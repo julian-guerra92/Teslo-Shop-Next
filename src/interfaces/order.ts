@@ -16,7 +16,7 @@ export interface IOrder {
 export interface IOrderItems {
    _id: string;
    title: string;
-   size: ISize;
+   size?: ISize;
    quantity: number;
    slug: string;
    image: string;
