@@ -30,7 +30,7 @@ const CartPage = () => {
                <CartList editable={true} />
             </Grid>
             <Grid item xs={12} sm={12} md={5}>
-               <Card className='symmary-card'>
+               <Card className='summary-card'>
                   <CardContent>
                      <Typography variant='h2'>Order</Typography>
                      <Divider sx={{ my: 1 }} />

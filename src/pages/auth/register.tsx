@@ -2,11 +2,14 @@
 import { useState, useContext } from 'react';
 import { GetServerSideProps } from 'next';
 import NextLink from 'next/link';
+import { getServerSession } from 'next-auth';
 import { useRouter } from 'next/router';
-import { getSession, signIn } from 'next-auth/react';
+import { signIn } from 'next-auth/react';
 import { Box, Button, Chip, CircularProgress, Grid, Link, TextField, Typography } from '@mui/material';
 import { ErrorOutline } from '@mui/icons-material';
 import { useForm } from 'react-hook-form';
+
+import { authOptions } from '../../pages/api/auth/[...nextauth]';
 import { AuthLayout } from '../../components/layouts';
 import { validations } from '../../utils';
 import { AuthContext } from '../../context';
@@ -168,8 +171,8 @@ const RegisterPage = () => {
    )
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
-   const session = await getSession({ req });
+export const getServerSideProps: GetServerSideProps = async ({ req, res, query }) => {
+   const session = await getServerSession(req, res, authOptions);
    const { p = '/' } = query;
    if (session) {
       return {

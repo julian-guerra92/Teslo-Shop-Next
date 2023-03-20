@@ -13,6 +13,8 @@ import { dbOrders } from '../../database';
 import { IOrder } from '../../interfaces';
 import { countries } from '../../utils';
 import { tesloApi } from '../../api';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '../api/auth/[...nextauth]';
 
 export type OrderResponseBody = {
    id: string;
@@ -164,9 +166,9 @@ const OrderPage: NextPage<Props> = ({ order }) => {
    )
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, res, query }) => {
    const { id = '' } = query;
-   const session: any = await getSession({ req });
+   const { user }: any = await getServerSession(req, res, authOptions);
    const order = await dbOrders.getOrderById(id.toString());
    if (!order) {
       return {
@@ -176,7 +178,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
          }
       }
    }
-   if (order.user !== session.user._id) {
+   if (order.user !== user._id) {
       return {
          redirect: {
             destination: '/orders/history',

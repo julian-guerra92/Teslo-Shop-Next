@@ -2,14 +2,14 @@
 import { useState, useEffect } from 'react';
 import { GetServerSideProps } from 'next';
 import { getServerSession } from 'next-auth';
-import { getSession, signIn, getProviders } from 'next-auth/react';
+import { signIn, getProviders } from 'next-auth/react';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { Box, Button, Chip, CircularProgress, Grid, Link, TextField, Typography, Divider } from '@mui/material';
 import { ErrorOutline } from '@mui/icons-material';
 import { useForm } from 'react-hook-form';
 
-import { authOptions } from '../../pages/api/auth/[...nextauth]'
+import { authOptions } from '../../pages/api/auth/[...nextauth]';
 import { AuthLayout } from '../../components/layouts';
 import { validations } from '../../utils';
 
@@ -39,15 +39,13 @@ const LoginPage = () => {
          setShowError(true);
          setTimeout(() => setShowError(false), 4000);
       }
-   }, [router])
+   }, [router, hasError])
 
    useEffect(() => {
       getProviders().then(prov => {
          setProviders(prov);
       })
    }, [])
-
-
 
    const onLoginUser = async ({ email, password }: FormData) => {
       //*Método mediante el NextAuth

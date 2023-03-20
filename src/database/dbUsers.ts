@@ -42,7 +42,7 @@ export const oAuthToDbUser = async (oAuthEmail: string, oAuthName: string) => {
    const newUser = new User({
       email: oAuthEmail,
       firstName: oAuthName,
-      lastName: oAuthName, //!Posible mejora posterior a la implemenetación
+      lastName: ' ', //!Posible mejora posterior a la implemenetación
       password: '@',
       role: 'client'
    })

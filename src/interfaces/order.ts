@@ -2,15 +2,17 @@ import { IUser, IShippingAddres, IOrderSummary } from './';
 import { ISize } from './';
 
 export interface IOrder {
-   _id?: string;
-   user?: IUser | string;
-   orderItems: IOrderItems[];
-   shippingAdrress: IShippingAddres;
-   paymentResult?: string;
-   summaryOrder: IOrderSummary;
-   isPaid: boolean;
-   paidAt?: string;
-   transactionId?: string;
+   _id?:             string;
+   user?:            IUser | string;
+   orderItems:       IOrderItems[];
+   shippingAdrress:  IShippingAddres;
+   paymentResult?:   string;
+   summaryOrder:     IOrderSummary;
+   isPaid:           boolean;
+   paidAt?:          string;
+   transactionId?:   string;
+   createdAt?:       string;
+   updatedAt?:       string;
 }
 
 export interface IOrderItems {
