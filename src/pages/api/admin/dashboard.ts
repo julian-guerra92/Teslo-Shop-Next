@@ -14,7 +14,7 @@ type Data = {
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
-   db.connect();
+   await db.connect();
    const [
       numberOfOrders,
       paidOrders,
@@ -32,7 +32,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       Product.countDocuments({ inStock: 0 }),
       Product.countDocuments({ inStock: { $lte: 10 } }),
    ])
-   db.disconnect();
+   await db.disconnect();
    res.status(200).json({
       numberOfOrders,
       paidOrders,

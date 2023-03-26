@@ -1,6 +1,8 @@
 
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { getSession } from 'next-auth/react';
+import { getServerSession } from 'next-auth';
+
+import { authOptions } from '../../../pages/api/auth/[...nextauth]';
 import { db } from '../../../database';
 import { IOrder } from '../../../interfaces';
 import { Product, Order } from '../../../models';
@@ -23,7 +25,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
 const createOrder = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
    const { orderItems, summaryOrder } = req.body as IOrder;
    //*Verificar que tengamos un Usuario
-   const session: any = await getSession({ req });
+   const session: any = await getServerSession(req, res, authOptions);
    if (!session) {
       return res.status(401).json({ message: 'You must be authenticated to do this' })
    }

@@ -20,12 +20,12 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
 }
 
 const getOrders = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
-   db.connect();
+   await db.connect();
    const orders = await Order.find()
       .sort({ createdAt: 'desc' })
       .populate('user', 'firstName lastName email')
       .lean();
-   db.disconnect();
+   await db.disconnect();
    return res.status(200).json(orders);
 
 }

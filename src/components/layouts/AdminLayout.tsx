@@ -1,6 +1,7 @@
 
 
 import { FC, PropsWithChildren } from 'react';
+import Head from 'next/head';
 import { Box, Typography } from '@mui/material';
 import { AdminNavbar } from '../admin';
 import { SideMenu } from '../ui';
@@ -14,6 +15,9 @@ interface Props {
 export const AdminLayout: FC<PropsWithChildren<Props>> = ({ children, title, subTitle, icon }) => {
    return (
       <>
+         <Head>
+            <title>{title}</title>
+         </Head>
          <nav>
             <AdminNavbar />
          </nav>
