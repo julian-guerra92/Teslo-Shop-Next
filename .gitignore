@@ -39,3 +39,5 @@ next-env.d.ts
 mongo/
 .vscode/
 .env
+.env.development
+.env.production

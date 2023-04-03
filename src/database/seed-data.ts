@@ -15,7 +15,8 @@ interface SeedProduct {
 }
 
 interface SeedUser {
-    name: string;
+    firstName: string;
+    lastName: string;
     email: string;
     password: string;
     role: 'admin' | 'client';
@@ -32,13 +33,15 @@ interface SeedData {
 export const initialData: SeedData = {
     users: [
         {
-            name: 'Julián Rodríguez',
+            firstName: 'Julián Andŕes',
+            lastName: 'Rodríguez Guerra', 
             email: 'julian@google.com',
             password: bcrypt.hashSync('123456'),
             role: 'admin'
         },
         {
-            name: 'Margarita Arboleda',
+            firstName: 'Margarita',
+            lastName: 'Arboleda Tamayo', 
             email: 'margarita@google.com',
             password: bcrypt.hashSync('123456'),
             role: 'client'
